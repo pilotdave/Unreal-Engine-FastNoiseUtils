@@ -26,18 +26,16 @@ void FNSelect::SetEdgeFalloff(double edgeFalloff){
 	m_edgeFalloff = (edgeFalloff > boundSize / 2) ? boundSize / 2 : edgeFalloff;
 }
 
-void FNSelect::SetControlModule(FNModule * ctrlModule)
+void FNSelect::SetControlModule(FN * ctrlModule)
 {
 	controlModule = ctrlModule;
 }
 
-void FNSelect::SetSourceModules(FNModule* module1, FNModule* module2)
+void FNSelect::SetSourceModules(FN* module1, FN* module2)
 {
 	noiseModule1 = module1;
 	noiseModule2 = module2;
 }
-
-
 
 
 float FNSelect::getNoise(double x, double y, double z)
@@ -88,6 +86,59 @@ float FNSelect::getNoise(double x, double y, double z)
 		}
 		else {
 			return noiseModule2->getNoise(x, y, z);
+		}
+	}
+}
+
+
+float FNSelect::getNoise(double x, double y)
+{
+	double alpha;
+	if (m_edgeFalloff > 0.0) {
+		if (controlModule->getNoise(x, y) < (m_lowerBound - m_edgeFalloff)) {
+			// The output value from the control module is below the selector
+			// threshold; return the output value from the first source module.
+			return noiseModule1->getNoise(x, y);
+		}
+		else if (controlModule->getNoise(x, y) < (m_lowerBound + m_edgeFalloff)) {
+			// The output value from the control module is near the lower end of the
+			// selector threshold and within the smooth curve. Interpolate between
+			// the output values from the first and second source modules.
+			double lowerCurve = (m_lowerBound - m_edgeFalloff);
+			double upperCurve = (m_lowerBound + m_edgeFalloff);
+			alpha = SCurve3((controlModule->getNoise(x, y) - lowerCurve) / (upperCurve - lowerCurve));
+			return LinearInterp(noiseModule1->getNoise(x, y), noiseModule2->getNoise(x, y), alpha);
+
+		}
+		else if (controlModule->getNoise(x, y) < (m_upperBound - m_edgeFalloff)) {
+			// The output value from the control module is within the selector
+			// threshold; return the output value from the second source module.
+			return noiseModule2->getNoise(x, y);
+
+		}
+		else if (controlModule->getNoise(x, y) < (m_upperBound + m_edgeFalloff)) {
+			// The output value from the control module is near the upper end of the
+			// selector threshold and within the smooth curve. Interpolate between
+			// the output values from the first and second source modules.
+			double lowerCurve = (m_upperBound - m_edgeFalloff);
+			double upperCurve = (m_upperBound + m_edgeFalloff);
+			alpha = SCurve3(
+				(controlModule->getNoise(x, y) - lowerCurve) / (upperCurve - lowerCurve));
+			return LinearInterp(noiseModule2->getNoise(x, y), noiseModule1->getNoise(x, y), alpha);
+
+		}
+		else {
+			// Output value from the control module is above the selector threshold;
+			// return the output value from the first source module.
+			return noiseModule1->getNoise(x, y);
+		}
+	}
+	else {
+		if (controlModule->getNoise(x, y) < m_lowerBound || controlModule->getNoise(x, y) > m_upperBound) {
+			return noiseModule1->getNoise(x, y);
+		}
+		else {
+			return noiseModule2->getNoise(x, y);
 		}
 	}
 }

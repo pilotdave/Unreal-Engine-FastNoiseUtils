@@ -19,6 +19,14 @@ float FNModule::getNoise(double x, double y, double z)
 	return noise->GetNoise(x,y,z);
 }
 
+
+float FNModule::getNoise(double x, double y) {
+	return noise->GetNoise(x, y);
+}
+
+
+
+
 void FNModule::setSeed(int seed)
 {
 	noise->SetSeed(seed);

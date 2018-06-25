@@ -3,28 +3,29 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "FNModule.h"
+#include "FN.h"
 #include "FastNoise.h"
 
 /**
  * 
  */
-class SANDBOXGAME_API FNSelect: public FNModule
+class SANDBOXGAME_API FNSelect: public FN
 {
 public:
 	FNSelect();
 	~FNSelect();
 
 	float getNoise(double x, double y, double z);
+	float getNoise(double x, double y);
 	void SetBounds(double lowerBound, double upperBound);
 	void SetEdgeFalloff(double edgeFalloff);
-	void SetControlModule(FNModule* ctrlModule);
-	void SetSourceModules(FNModule* module1, FNModule* module2);
+	void SetControlModule(FN* ctrlModule);
+	void SetSourceModules(FN* module1, FN* module2);
 
 	private:
-		FNModule* controlModule;
-		FNModule* noiseModule1;
-		FNModule* noiseModule2;
+		FN * controlModule;
+		FN* noiseModule1;
+		FN* noiseModule2;
 
 		double m_lowerBound = -1;
 		double m_upperBound = 1;

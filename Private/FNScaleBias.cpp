@@ -3,7 +3,7 @@
 #include "FastNoiseUtils/Public/FNScaleBias.h"
 
 
-FNScaleBias::FNScaleBias(FNModule* sourceModule, float scale, float bias) {
+FNScaleBias::FNScaleBias(FN* sourceModule, float scale, float bias) {
 	setScale(scale);
 	setBias(bias);
 	fn_sourceModule = sourceModule;
@@ -24,7 +24,7 @@ void FNScaleBias::setScale(float scale)
 	fn_scale = scale;
 }
 
-void FNScaleBias::setSourceModule(FNModule* sourceModule)
+void FNScaleBias::setSourceModule(FN* sourceModule)
 {
 	fn_sourceModule = sourceModule;
 }
@@ -34,5 +34,9 @@ float FNScaleBias::getNoise(double x, double y, double z)
 	return (fn_sourceModule->getNoise(x, y, z) * fn_scale) + fn_bias;
 }
 
+float FNScaleBias::getNoise(double x, double y)
+{
+	return (fn_sourceModule->getNoise(x, y) * fn_scale) + fn_bias;
+}
 
 

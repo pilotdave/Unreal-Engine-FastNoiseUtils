@@ -3,18 +3,20 @@
 #pragma once
 
 #include "FastNoise.h"
+#include "FN.h"
 #include "CoreMinimal.h"
 
 /**
 *
 */
-class SANDBOXGAME_API FNModule
+class SANDBOXGAME_API FNModule: public FN
 {
 public:
 	FNModule();
-	virtual ~FNModule();
+	~FNModule();
 
-	virtual float getNoise(double x, double y, double z);
+	float getNoise(double x, double y, double z);
+	float getNoise(double x, double y);
 
 	void setSeed(int seed);
 	void setFrequency(float frequency);

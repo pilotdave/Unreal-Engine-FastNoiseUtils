@@ -8,19 +8,17 @@
 /**
 *
 */
-class SANDBOXGAME_API FNScaleBias: public FN
+class SANDBOXGAME_API FNExponent: public FN
 {
 public:
-	FNScaleBias(FN* sourceModule, float scale, float bias);
-	~FNScaleBias();
-	void setBias(float bias);
-	void setScale(float scale);
+	FNExponent(FN* sourceModule, float exponent);
+	~FNExponent();
+	void setExponent(float exponent);
 	void setSourceModule(FN* sourceModule);
 	float getNoise(double x, double y, double z);
 	float getNoise(double x, double y);
 
 private:
-	float fn_scale;
-	float fn_bias;
+	float fn_exponent;
 	FN* fn_sourceModule;
 };
